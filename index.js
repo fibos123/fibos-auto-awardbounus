@@ -33,9 +33,19 @@ function main() {
     , "table_key": ""
     , "lower_bound": ""
     , "upper_bound": ""
-    , "limit": 1
+    , "limit": 100
   })
-  const balance = parseFloat(account.rows[0].balance.quantity)
+
+  let balance = 0
+  if (account.rows && account.rows.length) {
+    account.rows.map(a => {
+      if (a.balance.quantity.substr(-2) === 'FO' && a.balance.contract === 'eosio') {
+        balance = parseFloat(a.balance.quantity)
+      }
+    })
+  }
+  console.log({ balance })
+  
   if (balance < 10) {
     return
   }
