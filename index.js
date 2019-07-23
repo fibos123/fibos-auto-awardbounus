@@ -55,7 +55,7 @@ function main() {
   let totleStaked = 0;
   let page = 0;
   do {
-    var res = httpClient.get("http://explorer.fibos.rocks/api/voter?producer=" + producer + "&page=" + page).json()
+    var res = httpClient.get("http://api.see.fo/voter?producer=" + producer + "&page=" + page).json()
     voters = voters.concat(res)
     res.map(v => {
       totleStaked += parseInt(v.staked)
