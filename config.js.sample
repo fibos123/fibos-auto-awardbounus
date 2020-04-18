@@ -1,6 +1,11 @@
 module.exports = {
-  httpEndPoint: "http://rpc-mainnet.fibos123.com",
+  httpEndPoint: "http://ca-rpc.fibos.io:8870",
   chainId: "6aa7bd33b6b45192465afa3553dedb531acaaff8928cf64b70bd4c5e49b7ec6a",
   privateKey: "",
   producerName: "",
+  backAccount: "", // 分红差额转入账号
+  memo: "", // 转账 MEMO
+  percentDefault: 0.6, // 分红比例
+  ownerFixList: {}, // 个别分红账号变更 sample: {originName: newName}
+  percentFixList: {} // 个别分红比率变更 sample: {name: 0.4}
 };

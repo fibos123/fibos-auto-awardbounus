@@ -1,6 +1,8 @@
 var FIBOS = require('fibos.js');
 var config = require('./config');
 var http = require('http');
+require('ssl').loadRootCerts();
+
 var httpClient = new http.Client();
 var fibos = FIBOS({
   chainId: config.chainId,
@@ -9,20 +11,15 @@ var fibos = FIBOS({
 });
 
 main()
-setInterval(main, 24 * 60 * 60 * 1000); // ever 1day do it
+setInterval(main, 1 * 60 * 60 * 1000); // ever 1 hours do it
 
 function main() {
-  // BP 用户名
-  const producer = ''
-  // 分红差额转入账号
-  const backAccount = ''
-  // 转账 MEMO
-  const memo = ''
-  // 分红比例
-  const percentDefault = 0.6;
-
-  const ownerFixList = {}
-  const percentFixList = {}
+  const producer = config.producerName
+  const backAccount = config.backAccount
+  const memo = config.memo
+  const percentDefault = config.percentDefault
+  const ownerFixList = config.ownerFixList
+  const percentFixList = config.percentFixList
 
   // 取得余额
   const account = fibos.getTableRowsSync({
@@ -55,7 +52,7 @@ function main() {
   let totleStaked = 0;
   let page = 0;
   do {
-    var res = httpClient.get("http://api.see.fo/voter?producer=" + producer + "&page=" + page).json()
+    var res = httpClient.get("https://api.see.fo/voter?producer=" + producer + "&page=" + page).json()
     voters = voters.concat(res)
     res.map(v => {
       totleStaked += parseInt(v.staked)
