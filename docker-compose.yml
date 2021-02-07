@@ -1,0 +1,9 @@
+version: '2'
+services:
+  fibos:
+    build: ./
+    restart: always
+    volumes:
+      - ./tsconfig.json:/tsconfig.json
+      - ./src:/src
+      - ./.env:/.env
