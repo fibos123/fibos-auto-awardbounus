@@ -11,6 +11,8 @@ interface IQueue {
 const queues: IQueue[] = [];
 
 const main = async () => {
+  if (queues.length) return;
+
   try {
     const balance = await getBalance();
     console.log({ balance });
