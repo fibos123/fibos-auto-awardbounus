@@ -1,5 +1,6 @@
 import fetch from 'node-fetch';
 import { accountName } from '../config';
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 export interface IVoter {
   owner: string;
@@ -20,7 +21,7 @@ export const getVoters = async () => {
   let page = 0;
   let isMore = true;
   do {
-    const url = 'http://api.see.fo/voter?producer=' + accountName + '&page=' + page;
+    const url = 'https://idc.blockeden.cn:446/explorer/voter?producer=' + accountName + '&page=' + page;
     const resRaw = await fetch(url);
     const res: IResponseVoter[] = await resRaw.json();
     res.map(v => {

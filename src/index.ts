@@ -47,8 +47,8 @@ const onTransfer = async () => {
   const info = queues.shift() as IQueue;
 
   try {
-    const res = await transfer(info.to, info.quantity, memo);
-    console.log(info.to, info.quantity + ' FO', `remain: ${queues.length}`);
+    await transfer(info.to, info.quantity, memo);
+    console.log(info.to, info.quantity.toFixed(4) + ' FO', `remain: ${queues.length}`);
   } catch (e) {
     queues.push(info);
     console.log('onTransfer error.');
