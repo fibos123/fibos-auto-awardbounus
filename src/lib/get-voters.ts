@@ -1,5 +1,5 @@
 import fetch from 'node-fetch';
-import { accountName } from '../config';
+import { accountName, httpEndpoint } from '../config';
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 
 export interface IVoter {
@@ -7,35 +7,67 @@ export interface IVoter {
   staked: number;
 }
 
-export interface IResponseVoter {
+export interface IVoters {
+  rows: Row[];
+  more: boolean;
+}
+
+export interface Row {
   owner: string;
-  staked: string;
+  proxy: string;
+  producers: string[];
+  staked: number | string;
   last_vote_weight: string;
-  is_proxy: false;
+  proxied_vote_weight: string;
+  is_proxy: number;
 }
 
 const sum = (accumulator: number, currentValue: number) => accumulator + currentValue;
 
 export const getVoters = async () => {
-  const voters: IVoter[] = [];
+  let voters: IVoter[] = [];
   let page = 0;
-  let isMore = true;
+  let isMore = false;
+  let lower_bound = '';
   do {
-    const url = 'https://idc.blockeden.cn:446/explorer/voter?producer=' + accountName + '&page=' + page;
-    const resRaw = await fetch(url);
-    const res: IResponseVoter[] = await resRaw.json();
-    res.map(v => {
-      voters.push({
-        owner: v.owner,
-        staked: parseInt(v.staked),
-      });
+    const limit = 200;
+    const data = { json: true, scope: 'eosio', code: 'eosio', table: 'voters', limit, lower_bound };
+    const resRaw = await fetch(httpEndpoint + '/v1/chain/get_table_rows', {
+      body: JSON.stringify(data),
+      method: 'POST',
     });
-    isMore = res.length ? true : false;
+    const res: IVoters = await resRaw.json();
+    lower_bound = res.rows[res.rows.length - 1].owner;
+    if (res.more && res.rows.length !== limit) {
+      throw 'limit error';
+    }
+    if (page > 0) {
+      res.rows.shift();
+    }
+    voters.push(
+      ...res.rows
+        .filter(v => v.producers.includes(accountName))
+        .map(v => ({
+          owner: v.owner,
+          staked: parseInt(v.staked.toString()),
+        }))
+    );
+    isMore = res.more;
     page++;
+    console.log('get voters page', page, lower_bound);
   } while (isMore);
+  voters = voters.sort(compare('staked')).reverse();
   const totalStaked = voters.map(v => v.staked).reduce(sum);
   return {
     voters,
     totalStaked,
   };
 };
+
+function compare(p) {
+  return function (m, n) {
+    var a = m[p];
+    var b = n[p];
+    return a - b;
+  };
+}
