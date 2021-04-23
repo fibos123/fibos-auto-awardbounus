@@ -37,13 +37,13 @@ export const getVoters = async () => {
       method: 'POST',
     });
     const res: IVoters = await resRaw.json();
-    lower_bound = res.rows[res.rows.length - 1].owner;
     if (res.more && res.rows.length !== limit) {
-      throw 'limit error';
+      throw `limit error, need ${limit}, but ${res.rows.length}`;
     }
-    if (page > 0) {
+    if (res.rows.length && res.rows[0].owner === lower_bound) {
       res.rows.shift();
     }
+    lower_bound = res.rows[res.rows.length - 1].owner;
     voters.push(
       ...res.rows
         .filter(v => v.producers.includes(accountName))
