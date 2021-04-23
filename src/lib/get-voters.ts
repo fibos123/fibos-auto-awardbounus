@@ -38,7 +38,8 @@ export const getVoters = async () => {
     });
     const res: IVoters = await resRaw.json();
     if (res.more && res.rows.length !== limit) {
-      throw `limit error, need ${limit}, but ${res.rows.length}`;
+      console.log(`limit error: need ${limit}, but ${res.rows.length}`);
+      continue;
     }
     if (res.rows.length && res.rows[0].owner === lower_bound) {
       res.rows.shift();
