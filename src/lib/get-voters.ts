@@ -30,7 +30,7 @@ export const getVoters = async () => {
   let isMore = false;
   let lower_bound = '';
   do {
-    const limit = 200;
+    const limit = 100;
     const data = { json: true, scope: 'eosio', code: 'eosio', table: 'voters', limit, lower_bound };
     const resRaw = await fetch(httpEndpoint + '/v1/chain/get_table_rows', {
       body: JSON.stringify(data),
