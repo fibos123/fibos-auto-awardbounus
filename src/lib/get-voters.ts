@@ -27,7 +27,7 @@ const sum = (accumulator: number, currentValue: number) => accumulator + current
 export const getVoters = async () => {
   let voters: IVoter[] = [];
   let page = 0;
-  let isMore = false;
+  let isMore = true;
   let lower_bound = '';
   do {
     const limit = 200;
